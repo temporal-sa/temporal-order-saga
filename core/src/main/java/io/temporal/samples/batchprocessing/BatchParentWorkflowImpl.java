@@ -44,7 +44,7 @@ public class BatchParentWorkflowImpl implements BatchParentWorkflow {
   private static final int WINDOW_SIZE = 4;
 
   // continue as new every x workflow executions (to keep event history size small)
-  private static final int CONTINUE_AS_NEW_THRESHOLD = 600;
+  private static final int CONTINUE_AS_NEW_THRESHOLD = 500;
 
   @Override
   public void processRecords(BatchParentWorkflowParams params) {
@@ -75,6 +75,8 @@ public class BatchParentWorkflowImpl implements BatchParentWorkflow {
       activeWorkflows.add(workflowExecution);
       processedWorkflows++;
 
+      currentOffset += BATCH_SIZE;
+
       // Avoid filling up the event history by continuing as new every CONTINUE_AS_NEW_THRESHOLD
       if (processedWorkflows >= CONTINUE_AS_NEW_THRESHOLD) {
         // Wait for all active child workflows to complete
@@ -82,14 +84,12 @@ public class BatchParentWorkflowImpl implements BatchParentWorkflow {
 
         log.info("Processed {} workflows, continuing as new", processedWorkflows);
 
-        // Continue as new from offset (records already processed)
-        Workflow.continueAsNew(params.getNumWords(),
-                params.getOffset()
-                + (processedWorkflows * BATCH_SIZE));
+        // Continue as new from currentOffset (records already processed)
+        params.setOffset(currentOffset);
+        Workflow.continueAsNew(params);
         return;
       }
 
-      currentOffset += BATCH_SIZE;
     }
 
     Workflow.await(() -> activeWorkflows.stream().allMatch(Promise::isCompleted));
