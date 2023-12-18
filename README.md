@@ -2,6 +2,8 @@
 
 Takes a list of words (words_alpha.txt) and processes them in batches of 50. Each batch is processed in parallel executing child workflows. A maximum of 4 child workflows can be executed in parallel.
 
+![diagram](./diagram.png)
+
 ## Configuration
 
 The sample is configured by default to connect to a [local Temporal Server](https://docs.temporal.io/cli#starting-the-temporal-server) running on localhost:7233.
@@ -34,8 +36,8 @@ wait
 Start an execution (the `arg` parameter is the number of records to process):
 
 ```bash
-# process 20000 records
-./gradlew -q execute -PmainClass=io.temporal.samples.batchprocessing.Caller -Parg=20000
+# process 20000 records (warning: takes 15+ minutes to finish executing)
+./gradlew -q execute -PmainClass=io.temporal.samples.batchprocessing.Caller -Parg=200000
 ```
 
 ## Tweak Configuration
