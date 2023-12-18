@@ -1,6 +1,6 @@
 # Batch Processing Sample
 
-Takes a list of words (words_alpha.txt) and processes them in batches of 50. Each batch is processed in parallel executing child workflows. A maximum of 4 child workflows can be executed in parallel.
+Takes a list of words (words_alpha.txt) and processes them (converts them to uppercase) in batches of 50. Each batch is processed in parallel executing child workflows. A maximum of 4 child workflows can be executed in parallel.
 
 ![diagram](./diagram.png)
 
