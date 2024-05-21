@@ -21,8 +21,9 @@ Start a worker:
 ./gradlew -q execute -PmainClass=io.temporal.samples.ordersaga.Worker
 ```
 
-Start an execution (the `arg` parameter is the number of records to process):
-
 ```bash
 ./gradlew -q execute -PmainClass=io.temporal.samples.ordersaga.Caller
 ```
+
+## TODO
+* Implement simple way to make activities fail (to trigger saga). Right now it happens on the last step of the order.
