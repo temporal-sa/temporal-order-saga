@@ -56,7 +56,7 @@ public class Caller {
   @SuppressWarnings("CatchAndPrintStackTrace")
   public static void main(String[] args) throws Exception {
 
-    System.out.println("EXAMPLE: ./gradlew -q execute -PmainClass=io.temporal.samples.batchprocessing.Caller");
+    System.out.println("EXAMPLE: ./gradlew -q execute -PmainClass=io.temporal.samples.ordersaga.Caller");
 
     runWorkflow();
 
