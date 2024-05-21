@@ -28,7 +28,7 @@ import javax.net.ssl.SSLException;
 
 public class Caller {
 
-  public static String runWorkflow(int numWords) throws FileNotFoundException, SSLException {
+  public static String runWorkflow() throws FileNotFoundException, SSLException {
     // generate a random reference number
 
     // Workflow execution code
@@ -45,13 +45,10 @@ public class Caller {
             .setWorkflowId("BatchParentWorkflow-" + timeSeconds)
             .setTaskQueue(TASK_QUEUE)
             .build();
-    BatchParentWorkflow transferWorkflow =
-        client.newWorkflowStub(BatchParentWorkflow.class, options);
+    OrderWorkflowSaga workflow = client.newWorkflowStub(OrderWorkflowSaga.class, options);
 
-    BatchParentWorkflowParams params = new BatchParentWorkflowParams(numWords, 0);
-
-    WorkflowClient.start(transferWorkflow::processRecords, params);
-    System.out.printf("\n\nBatch process requested\n");
+    // start the workflow
+    workflow.processOrder("order-" + timeSeconds);
 
     return "OK";
   }
@@ -59,11 +56,9 @@ public class Caller {
   @SuppressWarnings("CatchAndPrintStackTrace")
   public static void main(String[] args) throws Exception {
 
-    System.out.println("EXAMPLE: ./gradlew -q execute -PmainClass=io.temporal.samples.batchprocessing.Caller -Parg=\"10\"");
+    System.out.println("EXAMPLE: ./gradlew -q execute -PmainClass=io.temporal.samples.batchprocessing.Caller");
 
-    int numWords = args.length > 0 ? Integer.parseInt(args[0]) : 0;
-
-    runWorkflow(numWords);
+    runWorkflow();
 
     System.exit(0);
   }

@@ -37,14 +37,12 @@ public class Worker {
 
     // worker factory that can be used to create workers for specific task queues
     WorkerFactory factory = WorkerFactory.newInstance(TemporalClient.get());
-    io.temporal.worker.Worker workerForCommonTaskQueue = factory.newWorker(TASK_QUEUE, options);
-    workerForCommonTaskQueue.registerWorkflowImplementationTypes(
-        BatchParentWorkflowImpl.class, BatchChildWorkflowImpl.class);
-    BatchActivities batchActivities = new BatchActivitiesImpl();
-    workerForCommonTaskQueue.registerActivitiesImplementations(batchActivities);
+    io.temporal.worker.Worker worker = factory.newWorker(TASK_QUEUE, options);
+    worker.registerWorkflowImplementationTypes(OrderWorkflowSagaImpl.class);
+    worker.registerActivitiesImplementations(new OrderActivitiesImpl());
 
     // Start all workers created by this factory.
     factory.start();
-    System.out.println("Worker started for task queue: " + "BatchParentWorkflowTaskQueue");
+    System.out.println("Worker started for task queue: " + TASK_QUEUE);
   }
 }

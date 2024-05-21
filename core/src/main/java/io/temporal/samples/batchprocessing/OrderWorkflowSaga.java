@@ -23,7 +23,7 @@ import io.temporal.workflow.WorkflowInterface;
 import io.temporal.workflow.WorkflowMethod;
 
 @WorkflowInterface
-public interface BatchParentWorkflow {
+public interface OrderWorkflowSaga {
   @WorkflowMethod
-  void processRecords(BatchParentWorkflowParams params);
+  void processOrder(String orderId);
 }

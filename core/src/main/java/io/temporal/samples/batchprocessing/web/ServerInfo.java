@@ -43,8 +43,8 @@ public class ServerInfo {
   }
 
   public static String getTaskqueue() {
-    String taskqueue = System.getenv("TEMPORAL_BATCHPROCESSING_TASKQUEUE");
-    return taskqueue != null && !taskqueue.isEmpty() ? taskqueue : "BatchWorkflow";
+    String taskqueue = System.getenv("TEMPORAL_ORDERSAGA_TASKQUEUE");
+    return taskqueue != null && !taskqueue.isEmpty() ? taskqueue : "OrderWorkflowSagaTaskQueue";
   }
 
   public static String getWebServerURL() {

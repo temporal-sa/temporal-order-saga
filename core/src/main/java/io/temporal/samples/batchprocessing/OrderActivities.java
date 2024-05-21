@@ -22,12 +22,27 @@ package io.temporal.samples.batchprocessing;
 import io.temporal.activity.ActivityInterface;
 import java.util.List;
 
+import io.temporal.activity.ActivityInterface;
+import io.temporal.activity.ActivityMethod;
+
 @ActivityInterface
-public interface BatchActivities {
+public interface OrderActivities {
 
-  List<String> createSingleBatch(int batchSize, int readUntilLine, int offset);
+  @ActivityMethod
+  void processPayment(String orderId);
 
-  List<String> processBatch(List<String> batch);
+  @ActivityMethod
+  void reserveInventory(String orderId);
 
-  String processRecord(String record);
+  @ActivityMethod
+  void deliverOrder(String orderId);
+
+  @ActivityMethod
+  void refundPayment(String orderId);
+
+  @ActivityMethod
+  void restockInventory(String orderId);
+
+  @ActivityMethod
+  void revertOrder(String orderId);
 }
