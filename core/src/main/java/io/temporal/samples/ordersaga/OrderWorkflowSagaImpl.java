@@ -57,7 +57,7 @@ public class OrderWorkflowSagaImpl implements OrderWorkflowSaga {
           activities.reserveInventory(orderId);
 
           // Step 3: Deliver order
-          saga.addCompensation(() -> activities.revertOrder(orderId));
+          saga.addCompensation(() -> activities.cancelDelivery(orderId));
           activities.deliverOrder(orderId);
 
         } catch (Exception e) {

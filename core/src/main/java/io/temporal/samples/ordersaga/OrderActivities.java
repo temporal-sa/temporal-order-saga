@@ -42,5 +42,5 @@ public interface OrderActivities {
   void restockInventory(String orderId);
 
   @ActivityMethod
-  void revertOrder(String orderId);
+  void cancelDelivery(String orderId);
 }

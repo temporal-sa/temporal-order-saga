@@ -56,7 +56,7 @@ public class OrderActivitiesImpl implements OrderActivities {
   }
 
   @Override
-  public void revertOrder(String orderId) {
+  public void cancelDelivery(String orderId) {
     System.out.println("Reverting order: " + orderId);
     // Implement the actual order reversion logic here
   }
