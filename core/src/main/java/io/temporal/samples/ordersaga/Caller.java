@@ -48,7 +48,7 @@ public class Caller {
     OrderWorkflowSaga workflow = client.newWorkflowStub(OrderWorkflowSaga.class, options);
 
     // start the workflow
-    workflow.processOrder("order-" + timeSeconds);
+    WorkflowClient.start(workflow::processOrder, "order-" + timeSeconds);
 
     return "OK";
   }
