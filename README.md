@@ -26,4 +26,4 @@ Start a worker:
 ```
 
 ## TODO
-* Implement simple way to make activities fail (to trigger saga). Right now it happens on the last step of the order.
+* Uncomment the exceptions in OrderActivitiesImpl to see how the Saga handles failures
