@@ -25,5 +25,5 @@ Start a worker:
 ./gradlew -q execute -PmainClass=io.temporal.samples.ordersaga.Caller
 ```
 
-## TODO
+## How to trigger Saga compensations
 * Uncomment the exceptions in OrderActivitiesImpl to see how the Saga handles failures
