@@ -19,11 +19,14 @@
 
 package io.temporal.samples.ordersaga;
 
+import io.temporal.samples.ordersaga.dataclasses.SKUQuantity;
 import io.temporal.workflow.WorkflowInterface;
 import io.temporal.workflow.WorkflowMethod;
+
+import java.util.List;
 
 @WorkflowInterface
 public interface OrderWorkflowSaga {
   @WorkflowMethod
-  void processOrder(String orderId);
+  List<String> processOrder(String orderId, List<SKUQuantity> skus, double legacyProportion);
 }

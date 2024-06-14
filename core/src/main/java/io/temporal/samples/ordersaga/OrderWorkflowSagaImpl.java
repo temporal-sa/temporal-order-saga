@@ -20,13 +20,21 @@
 package io.temporal.samples.ordersaga;
 
 import io.temporal.activity.ActivityOptions;
+import io.temporal.samples.ordersaga.dataclasses.SKUQuantity;
+import io.temporal.samples.ordersaga.dataclasses.SplitSKUTraffic;
+import io.temporal.workflow.Async;
+import io.temporal.workflow.Promise;
 import io.temporal.workflow.Workflow;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.temporal.workflow.Saga;
 import io.temporal.common.RetryOptions;
+
+import static io.temporal.samples.ordersaga.SKUSplitter.splitTrafficBySKU;
 
 public class OrderWorkflowSagaImpl implements OrderWorkflowSaga {
 
@@ -45,26 +53,43 @@ public class OrderWorkflowSagaImpl implements OrderWorkflowSaga {
   private final OrderActivities activities = Workflow.newActivityStub(OrderActivities.class, options);
 
   @Override
-    public void processOrder(String orderId) {
-        Saga saga = new Saga(new Saga.Options.Builder().build());
-        try {
-          // Step 1: Process payment
-          saga.addCompensation(() -> activities.refundPayment(orderId));
-          activities.processPayment(orderId);
+    public List<String> processOrder(String orderId, List<SKUQuantity> skus, double legacyProportion) {
+      Saga.Options options = new Saga.Options.Builder()
+              .setParallelCompensation(true)
+              .build();
+      Saga saga = new Saga(options);
 
-          // Step 2: Reserve inventory
-          saga.addCompensation(() -> activities.restockInventory(orderId));
-          activities.reserveInventory(orderId);
+      try {
 
-          // Step 3: Deliver order
-          saga.addCompensation(() -> activities.cancelDelivery(orderId));
-          activities.deliverOrder(orderId);
+          SplitSKUTraffic splitSKUTraffic = splitTrafficBySKU(skus, legacyProportion);
+          logger.info("Split traffic into legacy and new SKUs: " + splitSKUTraffic);
 
-        } catch (Exception e) {
-          logger.error("Order processing failed, compensating.", e);
+          // Asynchronous activities
+          Promise<String> subtractUsingLegacyPromise = Async.function(activities::subtractUsingLegacy, splitSKUTraffic.getLegacySKUs());
+          saga.addCompensation(() -> activities.subtractUsingLegacyReverse(splitSKUTraffic.getLegacySKUs()));
+
+          Promise<String> subtractUsingNewPromise = Async.function(activities::subtractUsingNew, splitSKUTraffic.getNewSKUs());
+          saga.addCompensation(() -> activities.subtractUsingNewReverse(splitSKUTraffic.getNewSKUs()));
+
+          // Wait for both activities to complete
+          Promise.allOf(subtractUsingLegacyPromise, subtractUsingNewPromise).get();
+
+          // Handle the results if necessary
+          String legacyResult = subtractUsingLegacyPromise.get();
+          String newResult = subtractUsingNewPromise.get();
+
+          System.out.println("Result from subtractUsingLegacy: " + legacyResult);
+          System.out.println("Result from subtractUsingNew: " + newResult);
+
+          // Combine and return the results
+          List<String> results = new ArrayList<>();
+          results.add(legacyResult);
+          results.add(newResult);
+          return results;
+
+      } catch (Exception e) {
           saga.compensate();
-          throw Workflow.wrap(e); // Wraps the exception to make it serializable by Temporal
-        }
-    }
-
+          throw Workflow.wrap(e);
+      }
+  }
 }

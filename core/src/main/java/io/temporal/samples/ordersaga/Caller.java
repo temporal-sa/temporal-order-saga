@@ -21,8 +21,11 @@ package io.temporal.samples.ordersaga;
 
 import io.temporal.client.WorkflowClient;
 import io.temporal.client.WorkflowOptions;
+import io.temporal.samples.ordersaga.dataclasses.SKUQuantity;
 import io.temporal.samples.ordersaga.web.ServerInfo;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLException;
 
@@ -47,10 +50,20 @@ public class Caller {
             .build();
     OrderWorkflowSaga workflow = client.newWorkflowStub(OrderWorkflowSaga.class, options);
 
-    // start the workflow
-    WorkflowClient.start(workflow::processOrder, "order-" + timeSeconds);
+    // create a list of SKUs
+    List<SKUQuantity> skus = new ArrayList<>();
+    skus.add(new SKUQuantity("sku1001", -100));
+    skus.add(new SKUQuantity("sku2002", -50));
+    skus.add(new SKUQuantity("sku3003", -200));
 
-    return "OK";
+    double legacyProportion = 0.35;
+
+    // start the workflow
+    List<String> result = workflow.processOrder("Order-" + timeSeconds, skus, legacyProportion);
+
+    System.out.println("Workflow completed with result: " + result);
+
+    return result.toString();
   }
 
   @SuppressWarnings("CatchAndPrintStackTrace")

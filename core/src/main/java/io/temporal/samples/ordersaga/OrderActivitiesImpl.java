@@ -1,87 +1,48 @@
-/*
- *  Copyright (c) 2020 Temporal Technologies, Inc. All Rights Reserved
- *
- *  Copyright 2012-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- *  Modifications copyright (C) 2017 Uber Technologies, Inc.
- *
- *  Licensed under the Apache License, Version 2.0 (the "License"). You may not
- *  use this file except in compliance with the License. A copy of the License is
- *  located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- *  or in the "license" file accompanying this file. This file is distributed on
- *  an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- *  express or implied. See the License for the specific language governing
- *  permissions and limitations under the License.
- */
-
 package io.temporal.samples.ordersaga;
 
-import io.temporal.failure.ApplicationFailure;
+import io.temporal.samples.ordersaga.dataclasses.SKUQuantity;
+
+import java.util.List;
 
 public class OrderActivitiesImpl implements OrderActivities {
 
     @Override
-    public void processPayment(String orderId) {
-        System.out.println("Processing payment for order: " + orderId);
-        sleep(5); // simulate API call processing time
-        // Implement the actual payment processing logic here
+    public String subtractUsingLegacy(List<SKUQuantity> legacySKUs) {
+        // Mock implementation: return a string indicating the activity was performed
+        String result = "Legacy subtract completed for SKUs: " + legacySKUs;
+        System.out.println(result);
+
+        // Uncomment to test saga compensation
+        // throw new RuntimeException("Exception in subtractUsingLegacy");
+
+        return result;
     }
 
     @Override
-    public void reserveInventory(String orderId) {
-        System.out.println("Reserving inventory for order: " + orderId);
-        sleep(5); // simulate API call processing time
-        // Implement the actual inventory reservation logic here
+    public String subtractUsingNew(List<SKUQuantity> newSKUs) {
+        // Mock implementation: return a string indicating the activity was performed
+        String result = "New subtract completed for SKUs: " + newSKUs;
+        System.out.println(result);
 
-        // Simulate inventory reservation failure
-        //    Exception e = new RuntimeException("Inventory reservation failed");
-        //    throw ApplicationFailure.newNonRetryableFailure(e.getMessage(), e.getClass().getName());
+        // Uncomment to test saga compensation
+        // throw new RuntimeException("Exception in subtractUsingNew");
+
+        return result;
     }
 
     @Override
-    public void deliverOrder(String orderId) {
-        System.out.println("Delivering order: " + orderId);
-        sleep(5); // simulate API call processing time
-        // Implement the actual order delivery logic here
+    public void subtractUsingLegacyReverse(List<SKUQuantity> legacySKUs) {
+        // Mock implementation: return a string indicating the activity was performed
+        String result = "Legacy reverse subtract completed for SKUs: " + legacySKUs;
+        System.out.println(result);
 
-        // Simulate delivery failure
-        //    Exception e = new RuntimeException("Delivery failed");
-        //    throw ApplicationFailure.newNonRetryableFailure(e.getMessage(), e.getClass().getName());
     }
 
     @Override
-    public void refundPayment(String orderId) {
-        sleep(5); // simulate API call processing time
-        System.out.println("Refunding payment for order: " + orderId);
-        // Implement the actual payment refund logic here
-    }
+    public void subtractUsingNewReverse(List<SKUQuantity> newSKUs) {
+        // Mock implementation: return a string indicating the activity was performed
+        String result = "New reverse subtract completed for SKUs: " + newSKUs;
+        System.out.println(result);
 
-    @Override
-    public void restockInventory(String orderId) {
-        sleep(5); // simulate API call processing time
-        System.out.println("Restocking inventory for order: " + orderId);
-        // Implement the actual inventory restocking logic here
-    }
-
-    @Override
-    public void cancelDelivery(String orderId) {
-        sleep(5); // simulate API call processing time
-        System.out.println("Reverting order: " + orderId);
-        // Implement the actual order reversion logic here
-    }
-
-    private void sleep(int seconds) {
-        try {
-            // a random number between 800 and 1200
-            // to simulate variance in API call time
-            long sleepTime = (long) (Math.random() * 400) + 800;
-
-            Thread.sleep(seconds * sleepTime);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
     }
 }
