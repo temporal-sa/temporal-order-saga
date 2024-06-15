@@ -25,6 +25,7 @@ import io.temporal.samples.ordersaga.dataclasses.SplitSKUTraffic;
 import io.temporal.workflow.Async;
 import io.temporal.workflow.Promise;
 import io.temporal.workflow.Workflow;
+
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,56 +41,50 @@ public class OrderWorkflowSagaImpl implements OrderWorkflowSaga {
 
     private static final Logger logger = LoggerFactory.getLogger(OrderWorkflowSagaImpl.class);
 
-  private final ActivityOptions options = ActivityOptions.newBuilder()
-      .setScheduleToCloseTimeout(Duration.ofSeconds(30))
-      .setRetryOptions(
-          RetryOptions.newBuilder()
-              .setInitialInterval(Duration.ofSeconds(1))
-              .setMaximumInterval(Duration.ofSeconds(1))
-              .setMaximumAttempts(1)
-              .build())
-      .build();
+    private final ActivityOptions options = ActivityOptions.newBuilder()
+            .setStartToCloseTimeout(Duration.ofSeconds(2))
+            .build();
 
-  private final OrderActivities activities = Workflow.newActivityStub(OrderActivities.class, options);
+    private final OrderActivities activities = Workflow.newActivityStub(OrderActivities.class, options);
 
-  @Override
+    @Override
     public List<String> processOrder(String orderId, List<SKUQuantity> skus, double legacyProportion) {
-      Saga.Options options = new Saga.Options.Builder()
-              .setParallelCompensation(true)
-              .build();
-      Saga saga = new Saga(options);
+        Saga.Options options = new Saga.Options.Builder()
+                .setParallelCompensation(true)
+                .build();
+        Saga saga = new Saga(options);
 
-      try {
+        try {
 
-          SplitSKUTraffic splitSKUTraffic = splitTrafficBySKU(skus, legacyProportion);
-          logger.info("Split traffic into legacy and new SKUs: " + splitSKUTraffic);
+            SplitSKUTraffic splitSKUTraffic = splitTrafficBySKU(skus, legacyProportion);
+            logger.info("Split traffic into legacy and new SKUs: " + splitSKUTraffic);
 
-          // Asynchronous activities
-          Promise<String> subtractUsingLegacyPromise = Async.function(activities::subtractUsingLegacy, splitSKUTraffic.getLegacySKUs());
-          saga.addCompensation(() -> activities.subtractUsingLegacyReverse(splitSKUTraffic.getLegacySKUs()));
+            // Asynchronous activities
+            Promise<String> subtractUsingLegacyPromise = Async.function(activities::subtractUsingLegacy, splitSKUTraffic.getLegacySKUs());
+            saga.addCompensation(() -> activities.subtractUsingLegacyReverse(splitSKUTraffic.getLegacySKUs()));
 
-          Promise<String> subtractUsingNewPromise = Async.function(activities::subtractUsingNew, splitSKUTraffic.getNewSKUs());
-          saga.addCompensation(() -> activities.subtractUsingNewReverse(splitSKUTraffic.getNewSKUs()));
+            Promise<String> subtractUsingNewPromise = Async.function(activities::subtractUsingNew, splitSKUTraffic.getNewSKUs());
+            saga.addCompensation(() -> activities.subtractUsingNewReverse(splitSKUTraffic.getNewSKUs()));
 
-          // Wait for both activities to complete
-          Promise.allOf(subtractUsingLegacyPromise, subtractUsingNewPromise).get();
+            // Wait for both activities to complete
+            Promise.allOf(subtractUsingLegacyPromise, subtractUsingNewPromise).get();
 
-          // Handle the results if necessary
-          String legacyResult = subtractUsingLegacyPromise.get();
-          String newResult = subtractUsingNewPromise.get();
+            // Handle the results if necessary
+            String legacyResult = subtractUsingLegacyPromise.get();
+            String newResult = subtractUsingNewPromise.get();
 
-          System.out.println("Result from subtractUsingLegacy: " + legacyResult);
-          System.out.println("Result from subtractUsingNew: " + newResult);
+            System.out.println("Result from subtractUsingLegacy: " + legacyResult);
+            System.out.println("Result from subtractUsingNew: " + newResult);
 
-          // Combine and return the results
-          List<String> results = new ArrayList<>();
-          results.add(legacyResult);
-          results.add(newResult);
-          return results;
+            // Combine and return the results
+            List<String> results = new ArrayList<>();
+            results.add(legacyResult);
+            results.add(newResult);
+            return results;
 
-      } catch (Exception e) {
-          saga.compensate();
-          throw Workflow.wrap(e);
-      }
-  }
+        } catch (Exception e) {
+            saga.compensate();
+            throw Workflow.wrap(e);
+        }
+    }
 }

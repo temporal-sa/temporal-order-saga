@@ -1,10 +1,31 @@
 package io.temporal.samples.ordersaga;
 
 import io.temporal.samples.ordersaga.dataclasses.SKUQuantity;
+import io.temporal.samples.ordersaga.dataclasses.SplitSKUTraffic;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderActivitiesImpl implements OrderActivities {
+
+    @Override
+    public SplitSKUTraffic splitTrafficBySKU(List<SKUQuantity> listSKUQty, double legacyTrafficProportion) {
+        List<SKUQuantity> legacyList = new ArrayList<>();
+        List<SKUQuantity> newList = new ArrayList<>();
+
+        int totalSKUs = listSKUQty.size();
+        int legacySKUs = (int) Math.floor(totalSKUs * legacyTrafficProportion);
+
+        for (int i = 0; i < listSKUQty.size(); i++) {
+            if (i < legacySKUs) {
+                legacyList.add(listSKUQty.get(i));
+            } else {
+                newList.add(listSKUQty.get(i));
+            }
+        }
+
+        return new SplitSKUTraffic(legacyList, newList);
+    }
 
     @Override
     public String subtractUsingLegacy(List<SKUQuantity> legacySKUs) {
