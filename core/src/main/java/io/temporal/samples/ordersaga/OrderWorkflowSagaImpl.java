@@ -32,15 +32,9 @@ public class OrderWorkflowSagaImpl implements OrderWorkflowSaga {
 
     private static final Logger logger = LoggerFactory.getLogger(OrderWorkflowSagaImpl.class);
 
-  private final ActivityOptions options = ActivityOptions.newBuilder()
-      .setScheduleToCloseTimeout(Duration.ofSeconds(30))
-      .setRetryOptions(
-          RetryOptions.newBuilder()
-              .setInitialInterval(Duration.ofSeconds(1))
-              .setMaximumInterval(Duration.ofSeconds(1))
-              .setMaximumAttempts(1)
-              .build())
-      .build();
+    private final ActivityOptions options = ActivityOptions.newBuilder()
+            .setStartToCloseTimeout(Duration.ofSeconds(10))
+            .build();
 
   private final OrderActivities activities = Workflow.newActivityStub(OrderActivities.class, options);
 
