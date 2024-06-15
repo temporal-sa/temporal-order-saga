@@ -17,10 +17,11 @@
  *  permissions and limitations under the License.
  */
 
-package io.temporal.samples.ordersaga;
+package io.temporal.samples.ordersaga.splittrafficsubtract;
 
 import io.temporal.client.WorkflowClient;
 import io.temporal.client.WorkflowOptions;
+import io.temporal.samples.ordersaga.TemporalClient;
 import io.temporal.samples.ordersaga.dataclasses.SKUQuantity;
 import io.temporal.samples.ordersaga.web.ServerInfo;
 import java.io.FileNotFoundException;
@@ -45,10 +46,10 @@ public class Caller {
 
     WorkflowOptions options =
         WorkflowOptions.newBuilder()
-            .setWorkflowId("OrderProcessingSaga-" + timeSeconds)
+            .setWorkflowId("Subtract-" + timeSeconds)
             .setTaskQueue(TASK_QUEUE)
             .build();
-    OrderWorkflowSaga workflow = client.newWorkflowStub(OrderWorkflowSaga.class, options);
+    SplitTrafficSubtractSAGA workflow = client.newWorkflowStub(SplitTrafficSubtractSAGA.class, options);
 
     // create a list of SKUs
     List<SKUQuantity> skus = new ArrayList<>();
@@ -69,7 +70,7 @@ public class Caller {
   @SuppressWarnings("CatchAndPrintStackTrace")
   public static void main(String[] args) throws Exception {
 
-    System.out.println("EXAMPLE: ./gradlew -q execute -PmainClass=io.temporal.samples.ordersaga.Caller");
+    System.out.println("EXAMPLE: ./gradlew -q execute -PmainClass=io.temporal.samples.ordersaga.splittrafficsubtract.Caller");
 
     runWorkflow();
 

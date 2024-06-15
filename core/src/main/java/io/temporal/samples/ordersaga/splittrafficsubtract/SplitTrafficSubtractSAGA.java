@@ -17,7 +17,7 @@
  *  permissions and limitations under the License.
  */
 
-package io.temporal.samples.ordersaga;
+package io.temporal.samples.ordersaga.splittrafficsubtract;
 
 import io.temporal.samples.ordersaga.dataclasses.SKUQuantity;
 import io.temporal.workflow.WorkflowInterface;
@@ -26,7 +26,7 @@ import io.temporal.workflow.WorkflowMethod;
 import java.util.List;
 
 @WorkflowInterface
-public interface OrderWorkflowSaga {
+public interface SplitTrafficSubtractSAGA {
   @WorkflowMethod
   List<String> processOrder(String orderId, List<SKUQuantity> skus, double legacyProportion);
 }

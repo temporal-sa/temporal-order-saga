@@ -3,24 +3,28 @@ package io.temporal.samples.ordersaga.dataclasses;
 import java.util.List;
 
 public class SplitSKUTraffic {
-    private List<SKUQuantity> legacy;
-    private List<SKUQuantity> newTraffic;
+    private List<SKUQuantity> legacySKUs;
+    private List<SKUQuantity> newSKUs;
+
+    // Default constructor
+    public SplitSKUTraffic() {
+    }
 
     public SplitSKUTraffic(List<SKUQuantity> legacy, List<SKUQuantity> newTraffic) {
-        this.legacy = legacy;
-        this.newTraffic = newTraffic;
+        this.legacySKUs = legacy;
+        this.newSKUs = newTraffic;
     }
 
     public List<SKUQuantity> getLegacySKUs() {
-        return legacy;
+        return legacySKUs;
     }
 
     public List<SKUQuantity> getNewSKUs() {
-        return newTraffic;
+        return newSKUs;
     }
 
     @Override
     public String toString() {
-        return "Legacy: " + legacy + "\nNew: " + newTraffic;
+        return "Legacy: " + legacySKUs + "\nNew: " + newSKUs;
     }
 }

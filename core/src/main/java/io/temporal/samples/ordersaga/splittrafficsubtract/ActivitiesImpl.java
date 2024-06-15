@@ -1,13 +1,17 @@
-package io.temporal.samples.ordersaga;
+package io.temporal.samples.ordersaga.splittrafficsubtract;
 
+import io.temporal.activity.Activity;
+import io.temporal.failure.ApplicationFailure;
 import io.temporal.samples.ordersaga.dataclasses.SKUQuantity;
 import io.temporal.samples.ordersaga.dataclasses.SplitSKUTraffic;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrderActivitiesImpl implements OrderActivities {
+public class ActivitiesImpl implements Activities {
 
+    // divide list of SKUs into two lists based on the proportion
+    // will be used to split the traffic into two systems
     @Override
     public SplitSKUTraffic splitTrafficBySKU(List<SKUQuantity> listSKUQty, double legacyTrafficProportion) {
         List<SKUQuantity> legacyList = new ArrayList<>();
@@ -34,7 +38,11 @@ public class OrderActivitiesImpl implements OrderActivities {
         System.out.println(result);
 
         // Uncomment to test saga compensation
-        // throw new RuntimeException("Exception in subtractUsingLegacy");
+        // This error is set as non-retryable, so the activity will not be retried
+//        throw ApplicationFailure.newNonRetryableFailureWithCause(
+//                "Subtract failed in legacy system",
+//                "Subtract failed in legacy system",
+//                new RuntimeException("Exception in subtractUsingLegacy"));
 
         return result;
     }
@@ -46,7 +54,11 @@ public class OrderActivitiesImpl implements OrderActivities {
         System.out.println(result);
 
         // Uncomment to test saga compensation
-        // throw new RuntimeException("Exception in subtractUsingNew");
+        // This error is set as non-retryable, so the activity will not be retried
+//        throw ApplicationFailure.newNonRetryableFailureWithCause(
+//                "Subtract failed in new system",
+//                "Subtract failed in new system",
+//                new RuntimeException("Exception in subtractUsingLegacy"));
 
         return result;
     }

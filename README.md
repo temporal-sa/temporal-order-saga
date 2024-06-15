@@ -22,7 +22,7 @@ Start a worker:
 ```
 
 ```bash
-./gradlew -q execute -PmainClass=io.temporal.samples.ordersaga.Caller
+./gradlew -q execute -PmainClass=io.temporal.samples.ordersaga.splittrafficsubtract.Caller
 ```
 
 ## How to trigger Saga compensations

@@ -17,7 +17,7 @@
  *  permissions and limitations under the License.
  */
 
-package io.temporal.samples.ordersaga;
+package io.temporal.samples.ordersaga.splittrafficsubtract;
 
 import io.temporal.activity.ActivityOptions;
 import io.temporal.samples.ordersaga.dataclasses.SKUQuantity;
@@ -33,19 +33,16 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.temporal.workflow.Saga;
-import io.temporal.common.RetryOptions;
 
-import static io.temporal.samples.ordersaga.SKUSplitter.splitTrafficBySKU;
+public class SplitTrafficSubtractSAGAImpl implements SplitTrafficSubtractSAGA {
 
-public class OrderWorkflowSagaImpl implements OrderWorkflowSaga {
-
-    private static final Logger logger = LoggerFactory.getLogger(OrderWorkflowSagaImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(SplitTrafficSubtractSAGAImpl.class);
 
     private final ActivityOptions options = ActivityOptions.newBuilder()
             .setStartToCloseTimeout(Duration.ofSeconds(2))
             .build();
 
-    private final OrderActivities activities = Workflow.newActivityStub(OrderActivities.class, options);
+    private final Activities activities = Workflow.newActivityStub(Activities.class, options);
 
     @Override
     public List<String> processOrder(String orderId, List<SKUQuantity> skus, double legacyProportion) {
@@ -56,8 +53,8 @@ public class OrderWorkflowSagaImpl implements OrderWorkflowSaga {
 
         try {
 
-            SplitSKUTraffic splitSKUTraffic = splitTrafficBySKU(skus, legacyProportion);
-            logger.info("Split traffic into legacy and new SKUs: " + splitSKUTraffic);
+            SplitSKUTraffic splitSKUTraffic = activities.splitTrafficBySKU(skus, legacyProportion);
+            logger.info("Split traffic into legacy and new SKUs: {}", splitSKUTraffic);
 
             // Asynchronous activities
             Promise<String> subtractUsingLegacyPromise = Async.function(activities::subtractUsingLegacy, splitSKUTraffic.getLegacySKUs());

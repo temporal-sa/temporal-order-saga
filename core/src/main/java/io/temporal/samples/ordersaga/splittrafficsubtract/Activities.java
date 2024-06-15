@@ -1,4 +1,4 @@
-package io.temporal.samples.ordersaga;
+package io.temporal.samples.ordersaga.splittrafficsubtract;
 
 import io.temporal.activity.ActivityInterface;
 import io.temporal.activity.ActivityMethod;
@@ -8,7 +8,7 @@ import io.temporal.samples.ordersaga.dataclasses.SplitSKUTraffic;
 import java.util.List;
 
 @ActivityInterface
-public interface OrderActivities {
+public interface Activities {
 
   @ActivityMethod
   SplitSKUTraffic splitTrafficBySKU(List<SKUQuantity> listSKUQty,
