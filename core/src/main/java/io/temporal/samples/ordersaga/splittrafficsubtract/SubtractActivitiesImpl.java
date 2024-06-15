@@ -1,14 +1,12 @@
 package io.temporal.samples.ordersaga.splittrafficsubtract;
 
-import io.temporal.activity.Activity;
-import io.temporal.failure.ApplicationFailure;
 import io.temporal.samples.ordersaga.dataclasses.SKUQuantity;
 import io.temporal.samples.ordersaga.dataclasses.SplitSKUTraffic;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ActivitiesImpl implements Activities {
+public class SubtractActivitiesImpl implements SubtractActivities {
 
     // divide list of SKUs into two lists based on the proportion
     // will be used to split the traffic into two systems

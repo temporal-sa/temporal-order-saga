@@ -8,7 +8,7 @@ import io.temporal.samples.ordersaga.dataclasses.SplitSKUTraffic;
 import java.util.List;
 
 @ActivityInterface
-public interface Activities {
+public interface SubtractActivities {
 
   @ActivityMethod
   SplitSKUTraffic splitTrafficBySKU(List<SKUQuantity> listSKUQty,

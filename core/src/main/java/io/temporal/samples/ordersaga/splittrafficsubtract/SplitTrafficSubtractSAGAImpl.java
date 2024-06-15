@@ -42,7 +42,7 @@ public class SplitTrafficSubtractSAGAImpl implements SplitTrafficSubtractSAGA {
             .setStartToCloseTimeout(Duration.ofSeconds(2))
             .build();
 
-    private final Activities activities = Workflow.newActivityStub(Activities.class, options);
+    private final SubtractActivities activities = Workflow.newActivityStub(SubtractActivities.class, options);
 
     @Override
     public List<String> processOrder(String orderId, List<SKUQuantity> skus, double legacyProportion) {

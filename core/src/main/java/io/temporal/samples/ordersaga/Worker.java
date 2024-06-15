@@ -19,7 +19,9 @@
 
 package io.temporal.samples.ordersaga;
 
-import io.temporal.samples.ordersaga.splittrafficsubtract.ActivitiesImpl;
+import io.temporal.samples.ordersaga.containerallocation.AllocateActivitiesImpl;
+import io.temporal.samples.ordersaga.containerallocation.ContainerAllocationSAGAImpl;
+import io.temporal.samples.ordersaga.splittrafficsubtract.SubtractActivitiesImpl;
 import io.temporal.samples.ordersaga.splittrafficsubtract.SplitTrafficSubtractSAGAImpl;
 import io.temporal.samples.ordersaga.web.ServerInfo;
 import io.temporal.worker.WorkerFactory;
@@ -40,8 +42,8 @@ public class Worker {
     // worker factory that can be used to create workers for specific task queues
     WorkerFactory factory = WorkerFactory.newInstance(TemporalClient.get());
     io.temporal.worker.Worker worker = factory.newWorker(TASK_QUEUE, options);
-    worker.registerWorkflowImplementationTypes(SplitTrafficSubtractSAGAImpl.class);
-    worker.registerActivitiesImplementations(new ActivitiesImpl());
+    worker.registerWorkflowImplementationTypes(SplitTrafficSubtractSAGAImpl.class, ContainerAllocationSAGAImpl.class);
+    worker.registerActivitiesImplementations(new SubtractActivitiesImpl(), new AllocateActivitiesImpl());
 
     // Start all workers created by this factory.
     factory.start();
