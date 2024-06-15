@@ -33,7 +33,11 @@ public class OrderWorkflowSagaImpl implements OrderWorkflowSaga {
     private static final Logger logger = LoggerFactory.getLogger(OrderWorkflowSagaImpl.class);
 
     private final ActivityOptions options = ActivityOptions.newBuilder()
-            .setStartToCloseTimeout(Duration.ofSeconds(10))
+            .setScheduleToCloseTimeout(Duration.ofSeconds(30))
+            .setRetryOptions(
+                    RetryOptions.newBuilder()
+                            .setMaximumAttempts(1) // because we want to trigger Saga compensation any failure
+                            .build())
             .build();
 
   private final OrderActivities activities = Workflow.newActivityStub(OrderActivities.class, options);

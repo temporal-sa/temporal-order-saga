@@ -48,8 +48,8 @@ public class OrderActivitiesImpl implements OrderActivities {
         // Implement the actual order delivery logic here
 
         // Simulate delivery failure
-        //    Exception e = new RuntimeException("Delivery failed");
-        //    throw ApplicationFailure.newNonRetryableFailure(e.getMessage(), e.getClass().getName());
+            Exception e = new RuntimeException("Delivery failed");
+            throw ApplicationFailure.newNonRetryableFailure(e.getMessage(), e.getClass().getName());
     }
 
     @Override
